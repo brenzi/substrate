@@ -79,4 +79,3 @@ std = [
 no_global_allocator = [
 	"rstd/no_global_allocator",
 ]
- 
