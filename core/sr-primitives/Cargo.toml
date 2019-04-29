@@ -31,6 +31,9 @@ std = [
 no_global_allocator = [
 	"rstd/no_global_allocator",
 ]
-no_panic_handler_oom = [
-	"runtime_io/no_panic_handler_oom",
+no_panic_handler = [
+	"runtime_io/no_panic_handler",
+]
+no_oom = [
+	"runtime_io/no_oom",
 ]
