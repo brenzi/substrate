@@ -31,3 +31,6 @@ std = [
 no_global_allocator = [
 	"rstd/no_global_allocator",
 ]
+no_panic_handler_oom = [
+	"runtime-io/no_panic_handler_oom",
+]
