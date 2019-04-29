@@ -76,3 +76,6 @@ std = [
 	"offchain-primitives/std",
 	"consensus_authorities/std",
 ]
+no-global-allocator = [
+	"rstd/no-global-allocator"
+]
