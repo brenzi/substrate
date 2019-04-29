@@ -28,3 +28,6 @@ std = [
 	"parity-codec/std",
 	"substrate-primitives/std",
 ]
+no_global_allocator = [
+	"rstd/no_global_allocator",
+]
