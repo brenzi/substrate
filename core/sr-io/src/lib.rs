@@ -246,8 +246,12 @@ mod imp {
 	#[cfg(feature = "std")]
 	include!("../with_std.rs");
 
-	#[cfg(not(feature = "std"))]
+	#[cfg(all(not(feature = "std"), not(feature = "no_std_host")))]
 	include!("../without_std.rs");
+
+	#[cfg(feature = "no_std_host")]
+	include!("../without_std_no_std_host.rs");
+
 }
 
 #[cfg(feature = "std")]
