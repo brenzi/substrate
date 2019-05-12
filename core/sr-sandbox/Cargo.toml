@@ -28,3 +28,4 @@ std = [
 ]
 nightly = []
 strict = []
+no_std_host = []

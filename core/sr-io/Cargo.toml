@@ -37,6 +37,4 @@ strict = []
 wasm-nice-panic-message = []
 no_panic_handler = []
 no_oom = []
-no_std_host = [
-	#"trie"
-]
+no_std_host = []

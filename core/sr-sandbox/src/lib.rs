@@ -50,8 +50,11 @@ mod imp {
 	#[cfg(feature = "std")]
 	include!("../with_std.rs");
 
-	#[cfg(not(feature = "std"))]
+	#[cfg(all(not(feature = "std"), not(feature = "no_std_host")))]
 	include!("../without_std.rs");
+
+	#[cfg(all(not(feature = "std"), feature = "no_std_host"))]
+	include!("../without_std_no_std_host.rs");
 }
 
 /// Error that can occur while using this crate.
