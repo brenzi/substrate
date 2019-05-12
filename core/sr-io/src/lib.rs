@@ -253,7 +253,7 @@ mod imp {
 	#[cfg(all(not(feature = "std"), not(feature = "no_std_host")))]
 	include!("../without_std.rs");
 
-	#[cfg(feature = "no_std_host")]
+	#[cfg(all(not(feature = "std"), feature = "no_std_host"))]
 	include!("../without_std_no_std_host.rs");
 
 }
@@ -262,6 +262,6 @@ mod imp {
 pub use self::imp::{StorageOverlay, ChildrenStorageOverlay, with_storage, with_externalities, TestExternalities};
 #[cfg(all(not(feature = "std"), not(feature = "no_std_host")))]
 pub use self::imp::ext::*;
-#[cfg(feature = "no_std_host")]
+#[cfg(all(not(feature = "std"), feature = "no_std_host"))]
 pub use self::imp::{StorageOverlay, ChildrenStorageOverlay};
 

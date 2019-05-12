@@ -35,7 +35,7 @@ pub use substrate_state_machine::{
 	ChildStorageKey
 };
 */
-use primitives::H256;
+//use primitives::H256;
 
 //use core::collections::HashMap;
 
@@ -43,6 +43,39 @@ use primitives::H256;
 /// Additional bounds for `Hasher` trait for with_std.
 pub trait HasherBounds {}
 impl<T: Hasher> HasherBounds for T {}
+
+
+/*
+/// Ensures we use the right crypto when calling into native
+pub trait ExternTrieCrypto: Hasher {
+	/// Calculate enumerated trie root.
+	fn enumerated_trie_root(values: &[&[u8]]) -> Self::Out;
+}
+
+/// Additional bounds for Hasher trait for without_std.
+pub trait HasherBounds: ExternTrieCrypto {}
+impl<T: ExternTrieCrypto + Hasher> HasherBounds for T {}
+*/
+
+/*
+// Ensures we use a Blake2_256-flavored Hasher when calling into native
+impl ExternTrieCrypto for Blake2Hasher {
+	fn enumerated_trie_root(values: &[&[u8]]) -> Self::Out {
+		let lengths = values.iter().map(|v| (v.len() as u32).to_le()).collect::<Vec<_>>();
+		let values = values.iter().fold(Vec::new(), |mut acc, sl| { acc.extend_from_slice(sl); acc });
+		let mut result: [u8; 32] = Default::default();
+		unsafe {
+			ext_blake2_256_enumerated_trie_root.get()(
+				values.as_ptr(),
+				lengths.as_ptr(),
+				lengths.len() as u32,
+				result.as_mut_ptr()
+			);
+		}
+		result.into()
+	}
+}
+*/
 
 /*
 /// Returns a `ChildStorageKey` if the given `storage_key` slice is a valid storage
@@ -138,7 +171,9 @@ impl StorageApi for () {
 		H: Hasher,
 		H::Out: Ord,
 	{
-		trie::ordered_trie_root::<H, _, _>(input.iter())
+		//trie::ordered_trie_root::<H, _, _>(input.iter())
+		print("StorageApi::enumerate_trie_root() unimplemented");
+		H::Out::default()
 	}
 
 	fn trie_root<H, I, A, B>(input: I) -> H::Out
@@ -149,7 +184,9 @@ impl StorageApi for () {
 		H: Hasher,
 		H::Out: Ord,
 	{
-		trie::trie_root::<H, _, _, _>(input)
+		//trie::trie_root::<H, _, _, _>(input)
+		print("StorageApi::trie_root() unimplemented");
+		H::Out::default()
 	}
 
 	fn ordered_trie_root<H, I, A>(input: I) -> H::Out
@@ -159,7 +196,9 @@ impl StorageApi for () {
 		H: Hasher,
 		H::Out: Ord,
 	{
-		trie::ordered_trie_root::<H, _, _>(input)
+		//trie::ordered_trie_root::<H, _, _>(input)
+		print("StorageApi::ordered_trie_root() unimplemented");
+		H::Out::default()
 	}
 }
 

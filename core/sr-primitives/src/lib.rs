@@ -26,6 +26,7 @@ pub use parity_codec as codec;
 #[doc(hidden)]
 pub use serde;
 
+//#[cfg(any(feature = "std", feature="no_std_host"))]
 #[cfg(feature = "std")]
 pub use runtime_io::{StorageOverlay, ChildrenStorageOverlay};
 
