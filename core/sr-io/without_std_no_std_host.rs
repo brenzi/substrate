@@ -23,7 +23,7 @@ use rstd::prelude::*;
 use core::{intrinsics, panic::PanicInfo};
 use rstd::{vec::Vec, cell::Cell};
 
-use primitives::{ed25519, Blake2Hasher, sr25519 };
+//use primitives::{ed25519, Blake2Hasher, sr25519 };
 
 /*
 // Switch to this after PoC-3
