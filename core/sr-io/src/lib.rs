@@ -26,6 +26,10 @@
 #![cfg_attr(feature = "std", doc = "Substrate runtime standard library as compiled when linked with Rust's standard library.")]
 #![cfg_attr(not(feature = "std"), doc = "Substrate's runtime standard library as compiled without Rust's standard library.")]
 
+#[cfg(not(feature = "std"))]
+#[macro_use]
+extern crate alloc;
+
 use hash_db::Hasher;
 use rstd::vec::Vec;
 
@@ -256,5 +260,8 @@ mod imp {
 
 #[cfg(feature = "std")]
 pub use self::imp::{StorageOverlay, ChildrenStorageOverlay, with_storage, with_externalities, TestExternalities};
-#[cfg(not(feature = "std"))]
+#[cfg(all(not(feature = "std"), not(feature = "no_std_host")))]
 pub use self::imp::ext::*;
+#[cfg(feature = "no_std_host")]
+pub use self::imp::{StorageOverlay, ChildrenStorageOverlay};
+
