@@ -29,9 +29,11 @@ codec = { package = "parity-codec", version = "3.5.1", default-features = false 
 hash-db = { version = "0.12", default-features = false }
 libsecp256k1 = { version = "0.2.1", optional = true }
 tiny-keccak = { version = "1.4.2", optional = true }
-environmental = { version = "1.0.1", optional = true }
+environmental = { version = "1.0.1", default-features= false, optional = true }
 substrate-state-machine = { path = "../state-machine", optional = true }
 trie = { package = "substrate-trie", path = "../trie", optional = true }
+#
+twox-hash = { git = "https://github.com/shepmaster/twox-hash.git", branch="no-std", default-features = false, optional = true }
 
 [features]
 default = ["std"]
@@ -41,7 +43,7 @@ std = [
 	"rstd/std",
 	"hash-db/std",
 	"trie",
-	"environmental",
+	"environmental/std",
 	"substrate-state-machine",
 	"libsecp256k1",
 	"tiny-keccak"
@@ -51,4 +53,10 @@ strict = []
 wasm-nice-panic-message = []
 no_panic_handler = []
 no_oom = []
-no_std_host = []
+
+#TODO: rename feature to sgx
+no_std_host = [
+	"twox-hash",
+	"primitives/sgx",
+	"environmental"
+]

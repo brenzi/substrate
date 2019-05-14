@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Substrate.  If not, see <http://www.gnu.org/licenses/>.
 
+use primitives::hashing::{
+	twox_128, twox_256, twox_64
+};
 /*
 #[doc(hidden)]
 pub use rstd;
@@ -39,8 +42,20 @@ pub use substrate_state_machine::{
 */
 //use primitives::H256;
 
-//use core::collections::HashMap;
+use environmental::environmental;
 
+use std::collections::HashMap;
+
+environmental!(hm: HashMap<Vec<u8>, Vec<u8>>);
+
+/*use twox_hash;
+
+use std::hash::BuildHasherDefault;
+use std::collections::HashMap;
+use twox_hash::XxHash;
+
+let mut my_store: HashMap<_, _, BuildHasherDefault<XxHash>> = Default::default();
+*/
 
 /// Additional bounds for `Hasher` trait for with_std.
 pub trait HasherBounds {}
@@ -95,13 +110,17 @@ fn child_storage_key_or_panic(storage_key: &[u8]) -> ChildStorageKey<Blake2Hashe
 */
 impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
-		println!("StorageApi::storage() unimplemented");
-		Some(vec![0,1,2,3])
+		hm::with(|hm| hm.get(key).map(|s| s.to_vec()))
+			.expect("storage cannot be called outside of an Externalities-provided environment.")
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
-		println!("StorageApi::read_storage() unimplemented");
-		Some(0)
+		hm::with(|hm| hm.get(key).map(|value| {
+			let value = &value[value_offset..];
+			let written = std::cmp::min(value.len(), value_out.len());
+			value_out[..written].copy_from_slice(&value[..written]);
+			value.len()
+		})).expect("read_storage cannot be called outside of an Externalities-provided environment.")
 	}
 
 	fn child_storage(storage_key: &[u8], key: &[u8]) -> Option<Vec<u8>> {
@@ -110,7 +129,9 @@ impl StorageApi for () {
 	}
 
 	fn set_storage(key: &[u8], value: &[u8]) {
-		println!("StorageApi::set_storage() unimplemented");
+		hm::with(|hm|
+			hm.insert(key.to_vec(), value.to_vec())
+		);
 	}
 
 	fn read_child_storage(
@@ -242,6 +263,9 @@ impl CryptoApi for () {
 	}
 }
 
+
+
+
 impl HashingApi for () {
 	fn keccak_256(data: &[u8]) -> [u8; 32] {
 		println!("HashingApi::keccak256 unimplemented");
@@ -250,33 +274,23 @@ impl HashingApi for () {
 	}
 
 	fn blake2_128(data: &[u8]) -> [u8; 16] {
-		println!("HashingApi::blake2_128 unimplemented");
-		//blake2_128(data)
-		[0u8; 16]
+		blake2_128(data)
 	}
 
 	fn blake2_256(data: &[u8]) -> [u8; 32] {
-		println!("HashingApi::blake2_128 unimplemented");
-		//blake2_256(data)
-		[0u8; 32]
+		blake2_256(data)
 	}
 
 	fn twox_256(data: &[u8]) -> [u8; 32] {
-		println!("HashingApi::twox_256 unimplemented");
-		//twox_256(data)
-		[0u8; 32]
+		twox_256(data)
 	}
 
 	fn twox_128(data: &[u8]) -> [u8; 16] {
-		println!("HashingApi::twox_128 unimplemented");
-		//twox_128(data)
-		[0u8; 16]
+		twox_128(data)
 	}
 
 	fn twox_64(data: &[u8]) -> [u8; 8] {
-		println!("HashingApi::twox64 unimplemented");
-		//twox_64(data)
-		[0u8; 8]
+		twox_64(data)
 	}
 }
 

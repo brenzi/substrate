@@ -42,10 +42,13 @@ use serde::{Serialize, Deserialize};
 #[cfg(feature = "std")]
 pub use impl_serde::serialize as bytes;
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 pub mod hashing;
 #[cfg(feature = "std")]
 pub use hashing::{blake2_128, blake2_256, twox_64, twox_128, twox_256};
+#[cfg(feature = "sgx")]
+pub use hashing::{twox_64, twox_128, twox_256};
+
 #[cfg(feature = "std")]
 pub mod hexdisplay;
 pub mod crypto;
