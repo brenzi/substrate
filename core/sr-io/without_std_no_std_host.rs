@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Substrate.  If not, see <http://www.gnu.org/licenses/>.
 
+/*
 #[doc(hidden)]
 pub use rstd;
 pub use rstd::{mem, slice};
@@ -22,6 +23,7 @@ use rstd::prelude::*;
 
 use core::{intrinsics, panic::PanicInfo};
 use rstd::{vec::Vec, cell::Cell};
+*/
 
 //use primitives::{ed25519, Blake2Hasher, sr25519 };
 
@@ -93,22 +95,22 @@ fn child_storage_key_or_panic(storage_key: &[u8]) -> ChildStorageKey<Blake2Hashe
 */
 impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
-		print("StorageApi::storage() unimplemented");
+		println!("StorageApi::storage() unimplemented");
 		Some(vec![0,1,2,3])
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
-		print("StorageApi::read_storage() unimplemented");
+		println!("StorageApi::read_storage() unimplemented");
 		Some(0)
 	}
 
 	fn child_storage(storage_key: &[u8], key: &[u8]) -> Option<Vec<u8>> {
-		print("StorageApi::child_storage() unimplemented");
+		println!("StorageApi::child_storage() unimplemented");
 		Some(vec![0,1,2,3])
 	}
 
 	fn set_storage(key: &[u8], value: &[u8]) {
-		print("StorageApi::set_storage() unimplemented");
+		println!("StorageApi::set_storage() unimplemented");
 	}
 
 	fn read_child_storage(
@@ -117,52 +119,52 @@ impl StorageApi for () {
 		value_out: &mut [u8],
 		value_offset: usize,
 	) -> Option<usize> {
-		print("StorageApi::read_child_storage() unimplemented");
+		println!("StorageApi::read_child_storage() unimplemented");
 		Some(0)
 	}
 
 	fn set_child_storage(storage_key: &[u8], key: &[u8], value: &[u8]) {
-		print("StorageApi::set_child_storage() unimplemented");
+		println!("StorageApi::set_child_storage() unimplemented");
 	}
 
 	fn clear_storage(key: &[u8]) {
-		print("StorageApi::clear_storage() unimplemented");
+		println!("StorageApi::clear_storage() unimplemented");
 	}
 
 	fn clear_child_storage(storage_key: &[u8], key: &[u8]) {
-		print("StorageApi::clear_child_storage() unimplemented");
+		println!("StorageApi::clear_child_storage() unimplemented");
 	}
 
 	fn kill_child_storage(storage_key: &[u8]) {
-		print("StorageApi::kill_child_storage() unimplemented");
+		println!("StorageApi::kill_child_storage() unimplemented");
 	}
 
 	fn exists_storage(key: &[u8]) -> bool {
-		print("StorageApi::exists_storage() unimplemented");
+		println!("StorageApi::exists_storage() unimplemented");
 		false
 	}
 
 	fn exists_child_storage(storage_key: &[u8], key: &[u8]) -> bool {
-		print("StorageApi::exists_child_storage() unimplemented");
+		println!("StorageApi::exists_child_storage() unimplemented");
 		false
 	}
 
 	fn clear_prefix(prefix: &[u8]) {
-		print("StorageApi::clear_storage() unimplemented");
+		println!("StorageApi::clear_storage() unimplemented");
 	}
 
 	fn storage_root() -> [u8; 32] {
-		print("StorageApi::storage_root() unimplemented");
+		println!("StorageApi::storage_root() unimplemented");
 		[0u8; 32]
 	}
 
 	fn child_storage_root(storage_key: &[u8]) -> Vec<u8> {
-		print("StorageApi::child_storage_root() unimplemented");
+		println!("StorageApi::child_storage_root() unimplemented");
 		vec![0,1,2,3]
 	}
 
 	fn storage_changes_root(parent_hash: [u8; 32], parent_num: u64) -> Option<[u8; 32]> {
-		print("StorageApi::storage_changes_root() unimplemented");
+		println!("StorageApi::storage_changes_root() unimplemented");
 		Some([0u8; 32])
 	}
 
@@ -172,7 +174,7 @@ impl StorageApi for () {
 		H::Out: Ord,
 	{
 		//trie::ordered_trie_root::<H, _, _>(input.iter())
-		print("StorageApi::enumerate_trie_root() unimplemented");
+		println!("StorageApi::enumerate_trie_root() unimplemented");
 		H::Out::default()
 	}
 
@@ -185,7 +187,7 @@ impl StorageApi for () {
 		H::Out: Ord,
 	{
 		//trie::trie_root::<H, _, _, _>(input)
-		print("StorageApi::trie_root() unimplemented");
+		println!("StorageApi::trie_root() unimplemented");
 		H::Out::default()
 	}
 
@@ -197,14 +199,14 @@ impl StorageApi for () {
 		H::Out: Ord,
 	{
 		//trie::ordered_trie_root::<H, _, _>(input)
-		print("StorageApi::ordered_trie_root() unimplemented");
+		println!("StorageApi::ordered_trie_root() unimplemented");
 		H::Out::default()
 	}
 }
 
 impl OtherApi for () {
 	fn chain_id() -> u64 {
-		print("OtherApi::chain_id unimplemented");
+		println!("OtherApi::chain_id unimplemented");
 		0
 	}
 
@@ -215,19 +217,19 @@ impl OtherApi for () {
 
 impl CryptoApi for () {
 	fn ed25519_verify<P: AsRef<[u8]>>(sig: &[u8; 64], msg: &[u8], pubkey: P) -> bool {
-		print("CryptoApi::ed25519_verify unimplemented");
+		println!("CryptoApi::ed25519_verify unimplemented");
 		true
 		//ed25519::Pair::verify_weak(sig, msg, pubkey)
 	}
 
 	fn sr25519_verify<P: AsRef<[u8]>>(sig: &[u8; 64], msg: &[u8], pubkey: P) -> bool {
-		print("CryptoApi::sr25519_verify unimplemented");
+		println!("CryptoApi::sr25519_verify unimplemented");
 		true
 		//sr25519::Pair::verify_weak(sig, msg, pubkey)
 	}
 
 	fn secp256k1_ecdsa_recover(sig: &[u8; 65], msg: &[u8; 32]) -> Result<[u8; 64], EcdsaVerifyError> {
-		print("CryptoApi::secp256k1_ecdsa_recover unimplemented");
+		println!("CryptoApi::secp256k1_ecdsa_recover unimplemented");
 		Err(EcdsaVerifyError::BadRS)
 /*
 		let rs = secp256k1::Signature::parse_slice(&sig[0..64]).map_err(|_| EcdsaVerifyError::BadRS)?;
@@ -242,37 +244,37 @@ impl CryptoApi for () {
 
 impl HashingApi for () {
 	fn keccak_256(data: &[u8]) -> [u8; 32] {
-		print("HashingApi::keccak256 unimplemented");
+		println!("HashingApi::keccak256 unimplemented");
 		[0u8; 32]
 		//tiny_keccak::keccak256(data)
 	}
 
 	fn blake2_128(data: &[u8]) -> [u8; 16] {
-		print("HashingApi::blake2_128 unimplemented");
+		println!("HashingApi::blake2_128 unimplemented");
 		//blake2_128(data)
 		[0u8; 16]
 	}
 
 	fn blake2_256(data: &[u8]) -> [u8; 32] {
-		print("HashingApi::blake2_128 unimplemented");
+		println!("HashingApi::blake2_128 unimplemented");
 		//blake2_256(data)
 		[0u8; 32]
 	}
 
 	fn twox_256(data: &[u8]) -> [u8; 32] {
-		print("HashingApi::twox_256 unimplemented");
+		println!("HashingApi::twox_256 unimplemented");
 		//twox_256(data)
 		[0u8; 32]
 	}
 
 	fn twox_128(data: &[u8]) -> [u8; 16] {
-		print("HashingApi::twox_128 unimplemented");
+		println!("HashingApi::twox_128 unimplemented");
 		//twox_128(data)
 		[0u8; 16]
 	}
 
 	fn twox_64(data: &[u8]) -> [u8; 8] {
-		print("HashingApi::twox64 unimplemented");
+		println!("HashingApi::twox64 unimplemented");
 		//twox_64(data)
 		[0u8; 8]
 	}
@@ -280,7 +282,7 @@ impl HashingApi for () {
 
 impl OffchainApi for () {
 	fn submit_extrinsic<T: codec::Encode>(data: &T) {
-		print("OffchainApi::submit_extrinsic unimplemented");
+		println!("OffchainApi::submit_extrinsic unimplemented");
 	}
 }
 
@@ -314,34 +316,21 @@ pub fn with_storage<R, F: FnOnce() -> R>(storage: &mut StorageOverlay, f: F) -> 
 }
 */
 
-impl OtherApi for () {
-	fn chain_id() -> u64 {
-		ext::with(|ext|
-			ext.chain_id()
-		).unwrap_or(0)
-	}
-
-	fn print<T: Printable + Sized>(value: T) {
-		value.print()
-	}
-}
-
-
 impl<'a> Printable for &'a [u8] {
 	fn print(self) {
-		print("Runtime: can't print");
+		println!("Runtime: {:?}", &self);
 	}
 }
 
 impl<'a> Printable for &'a str {
 	fn print(self) {
-		print("Runtime: can't print");
+		println!("Runtime: {}", self);
 	}
 }
 
 impl Printable for u64 {
 	fn print(self) {
-		print("Runtime: can't print");
+		println!("Runtime: {}", self);
 	}
 }
 

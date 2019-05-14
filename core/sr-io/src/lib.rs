@@ -31,7 +31,12 @@
 extern crate alloc;
 
 use hash_db::Hasher;
-use rstd::vec::Vec;
+
+
+#[macro_use]
+extern crate sgx_tstd as std;
+use std::prelude::v1::*;
+//use rstd::vec::Vec;
 
 #[doc(hidden)]
 pub use codec;

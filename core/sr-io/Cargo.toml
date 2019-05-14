@@ -8,6 +8,20 @@ edition = "2018"
 [build-dependencies]
 rustc_version = "0.2"
 
+[target.'cfg(not(target_env = "sgx"))'.dependencies]
+#sgx_types = { git = "https://github.com/baidu/rust-sgx-sdk"}
+#sgx_tseal = { git = "https://github.com/baidu/rust-sgx-sdk" }
+sgx_tstd = { git = "https://github.com/baidu/rust-sgx-sdk" }
+#sgx_rand = { git = "https://github.com/baidu/rust-sgx-sdk" }
+#sgx_tcrypto = { git = "https://github.com/baidu/rust-sgx-sdk" }
+#rust-crypto = { git = "https://github.com/baidu/rust-sgx-sdk" }
+#rust-base58 = { git = "https://github.com/baidu/rust-sgx-sdk" }
+#sgx_serialize = { git = "https://github.com/baidu/rust-sgx-sdk" }
+#sgx_crypto_helper = { package="sgx_tcrypto_helper", git = "https://github.com/baidu/rust-sgx-sdk" }
+
+[target.'cfg(target_env = "sgx")'.dependencies]
+#sgx_crypto_helper = { package="sgx_tcrypto_helper", git = "https://github.com/baidu/rust-sgx-sdk" }
+
 [dependencies]
 rstd = { package = "sr-std", path = "../sr-std", default-features = false }
 primitives = { package = "substrate-primitives", path = "../primitives", default-features = false }
