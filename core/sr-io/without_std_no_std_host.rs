@@ -314,6 +314,19 @@ pub fn with_storage<R, F: FnOnce() -> R>(storage: &mut StorageOverlay, f: F) -> 
 }
 */
 
+impl OtherApi for () {
+	fn chain_id() -> u64 {
+		ext::with(|ext|
+			ext.chain_id()
+		).unwrap_or(0)
+	}
+
+	fn print<T: Printable + Sized>(value: T) {
+		value.print()
+	}
+}
+
+
 impl<'a> Printable for &'a [u8] {
 	fn print(self) {
 		print("Runtime: can't print");
