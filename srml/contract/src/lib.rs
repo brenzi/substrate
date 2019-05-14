@@ -375,8 +375,13 @@ decl_module! {
 			#[compact] gas_limit: T::Gas,
 			data: Vec<u8>
 		) -> Result {
+			runtime_io::print("call(): called");
+
 			let origin = ensure_signed(origin)?;
+			runtime_io::print("call(): origin ok");
+
 			let dest = T::Lookup::lookup(dest)?;
+			runtime_io::print("call(): lookup done");
 
 			// Pay for the gas upfront.
 			//
