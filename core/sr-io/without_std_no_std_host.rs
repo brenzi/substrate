@@ -117,6 +117,10 @@ impl StorageApi for () {
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
 		println!("read_storage({:x?})", key);
+		hm::with(|hm|
+			hm.insert(vec!(0,1,22), vec!(4,5,66))
+		);
+		hm::with(|hm| println!("test reading storage is key 0,1,22 in there? {:?}", hm.contains_key(&vec!(0,1,22)) ));
 
 		hm::with(|hm| println!("test reading storage is key 0,1,2 in there? {:?}", hm.contains_key(&vec!(0,1,2)) ));
 
