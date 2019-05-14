@@ -116,6 +116,8 @@ impl StorageApi for () {
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
+		hm::with(|hm| println!("test reading storage is key 0,1,2 in there? {:?}", hm.contains_key(&vec!(0,1,2)) ));
+
 		hm::with(|hm| hm.get(&vec!(0,1,2)).map(|s| println!("test reading storage key 0,1,2 which reads: {:?}", s.to_vec())));
 		
 		println!("read_storage({:x?})", key);
