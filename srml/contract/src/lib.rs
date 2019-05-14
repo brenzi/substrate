@@ -105,6 +105,7 @@ use system::{ensure_signed, RawOrigin};
 use substrate_primitives::storage::well_known_keys::CHILD_STORAGE_KEY_PREFIX;
 use timestamp;
 
+
 pub type CodeHash<T> = <T as system::Trait>::Hash;
 pub type TrieId = Vec<u8>;
 
@@ -344,6 +345,7 @@ decl_module! {
 			code: Vec<u8>
 		) -> Result {
 			let origin = ensure_signed(origin)?;
+			runtime_io::print("put_code: ensure_signed ok");
 			let schedule = <Module<T>>::current_schedule();
 
 			let (mut gas_meter, imbalance) = gas::buy_gas::<T>(&origin, gas_limit)?;
