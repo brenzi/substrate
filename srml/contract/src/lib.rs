@@ -344,6 +344,7 @@ decl_module! {
 			#[compact] gas_limit: T::Gas,
 			code: Vec<u8>
 		) -> Result {
+			runtime_io::print("put_code: called");
 			let origin = ensure_signed(origin)?;
 			runtime_io::print("put_code: ensure_signed ok");
 			let schedule = <Module<T>>::current_schedule();
