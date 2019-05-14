@@ -110,11 +110,13 @@ fn child_storage_key_or_panic(storage_key: &[u8]) -> ChildStorageKey<Blake2Hashe
 */
 impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
+		println!("storage({:x?})", key);
 		hm::with(|hm| hm.get(key).map(|s| s.to_vec()))
 			.expect("storage cannot be called outside of an Externalities-provided environment.")
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
+		println!("read_storage({:x?})", key);
 		hm::with(|hm| hm.get(key).map(|value| {
 			let value = &value[value_offset..];
 			let written = std::cmp::min(value.len(), value_out.len());
@@ -129,6 +131,7 @@ impl StorageApi for () {
 	}
 
 	fn set_storage(key: &[u8], value: &[u8]) {
+		println!("set_storage({:x?}, {:x?})", key, value);
 		hm::with(|hm|
 			hm.insert(key.to_vec(), value.to_vec())
 		);
@@ -274,22 +277,27 @@ impl HashingApi for () {
 	}
 
 	fn blake2_128(data: &[u8]) -> [u8; 16] {
+		println!("blake2_128 of {:x?}", data);
 		blake2_128(data)
 	}
 
 	fn blake2_256(data: &[u8]) -> [u8; 32] {
+		println!("blake2_256 of {:x?}", data);
 		blake2_256(data)
 	}
 
 	fn twox_256(data: &[u8]) -> [u8; 32] {
+		println!("twox_256 of {:x?}", data);
 		twox_256(data)
 	}
 
 	fn twox_128(data: &[u8]) -> [u8; 16] {
+		println!("twox_128 of {:x?}", data);
 		twox_128(data)
 	}
 
 	fn twox_64(data: &[u8]) -> [u8; 8] {
+		println!("twox_64 of {:x?}", data);
 		twox_64(data)
 	}
 }
