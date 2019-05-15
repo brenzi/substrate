@@ -111,6 +111,8 @@ fn child_storage_key_or_panic(storage_key: &[u8]) -> ChildStorageKey<Blake2Hashe
 impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
 		println!("storage('{:?}')", key);
+		hm::with(|hm| println!("key exists?: {:?}", hm.contains_key(key)));
+
 		hm::with(|hm| hm.get(key).map(|s| s.to_vec()))
 			.expect("storage cannot be called outside of an Externalities-provided environment.")
 	}
