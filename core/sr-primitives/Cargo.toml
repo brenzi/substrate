@@ -29,5 +29,5 @@ std = [
 	"substrate-primitives/std",
 ]
 no_std_host = [
-	"runtime_io/no_std_host"
+	"runtime_io/sgx"
 ]

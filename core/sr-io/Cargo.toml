@@ -54,9 +54,7 @@ strict = []
 wasm-nice-panic-message = []
 no_panic_handler = []
 no_oom = []
-
-#TODO: rename feature to sgx
-no_std_host = [
+sgx = [
 	"twox-hash",
 	"primitives/sgx",
 	"environmental"
