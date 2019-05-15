@@ -204,25 +204,28 @@ pub fn buy_gas<T: Trait>(
 ) -> Result<(GasMeter<T>, NegativeImbalanceOf<T>), &'static str> {
 	// Check if the specified amount of gas is available in the current block.
 	// This cannot underflow since `gas_spent` is never greater than `block_gas_limit`.
+	runtime_io::print("gas::buy_gas: called");
 	let gas_available = <Module<T>>::block_gas_limit() - <Module<T>>::gas_spent();
 	if gas_limit > gas_available {
 		// gas limit reached, revert the transaction and retry again in the future
+		runtime_io::print("gas::buy_gas: gas limit reached");
 		return Err(BLOCK_FULL);
 	}
 
 	// Buy the specified amount of gas.
 	let gas_price = <Module<T>>::gas_price();
+
 	let cost = <T::Gas as As<BalanceOf<T>>>::as_(gas_limit.clone())
 		.checked_mul(&gas_price)
 		.ok_or("overflow multiplying gas limit by price")?;
-
+	runtime_io::print("gas::buy_gas: will withdraw gas cost");
 	let imbalance = T::Currency::withdraw(
 		transactor,
 		cost,
 		WithdrawReason::Fee,
 		ExistenceRequirement::KeepAlive
 	)?;
-
+	runtime_io::print("gas::buy_gas: gas cost withdrawn");
 	Ok((GasMeter {
 		limit: gas_limit,
 		gas_left: gas_limit,

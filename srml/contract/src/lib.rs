@@ -348,7 +348,7 @@ decl_module! {
 			let origin = ensure_signed(origin)?;
 			runtime_io::print("put_code: ensure_signed ok");
 			let schedule = <Module<T>>::current_schedule();
-			runtime_io::print("put_code: gut current schedule");
+			runtime_io::print("put_code: got current schedule");
 			let (mut gas_meter, imbalance) = gas::buy_gas::<T>(&origin, gas_limit)?;
 			runtime_io::print("put_code: bought gas");
 			let result = wasm::save_code::<T>(code, &mut gas_meter, &schedule);
