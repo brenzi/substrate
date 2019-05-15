@@ -268,5 +268,5 @@ pub use self::imp::{StorageOverlay, ChildrenStorageOverlay, with_storage, with_e
 #[cfg(all(not(feature = "std"), not(feature = "sgx")))]
 pub use self::imp::ext::*;
 #[cfg(all(not(feature = "std"), feature = "sgx"))]
-pub use self::imp::{StorageOverlay, ChildrenStorageOverlay};
+pub use self::imp::{StorageOverlay, ChildrenStorageOverlay, with_externalities, SgxExternalities};
 
