@@ -113,18 +113,13 @@ fn child_storage_key_or_panic(storage_key: &[u8]) -> ChildStorageKey<Blake2Hashe
 impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
 		println!("storage('{:?}')", key);
-		hm::with(|hm| println!("key exists?: {:?}", hm.contains_key(key)));
-
+		//hm::with(|hm| println!("key exists?: {:?}", hm.contains_key(key)));
 		hm::with(|hm| hm.get(key).map(|s| s.to_vec()))
 			.expect("storage cannot be called outside of an Externalities-provided environment.")
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
 		println!("read_storage('{:?}')", key);
-		hm::with(|hm| println!("test reading storage is key 'dummy' in there? {:?}", hm.contains_key(&vec!(114, 244, 120, 86, 194, 147, 166, 238, 151, 164, 221, 80, 216, 169, 209, 190)) ));
-
-		hm::with(|hm| hm.get(&vec!(0,1,2)).map(|s| println!("test reading storage key 0,1,2 which reads: {:?}", s.to_vec())));
-		
 		hm::with(|hm| hm.get(key).map(|value| {
 			let value = &value[value_offset..];
 			let written = std::cmp::min(value.len(), value_out.len());
