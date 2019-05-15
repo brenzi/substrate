@@ -110,18 +110,13 @@ fn child_storage_key_or_panic(storage_key: &[u8]) -> ChildStorageKey<Blake2Hashe
 */
 impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
-		println!("storage({:x?})", key);
+		println!("storage({})", String::from_utf8(key.to_vec()).unwrap());
 		hm::with(|hm| hm.get(key).map(|s| s.to_vec()))
 			.expect("storage cannot be called outside of an Externalities-provided environment.")
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
-		println!("read_storage({:x?})", key);
-		hm::with(|hm|
-			hm.insert(vec!(0,1,22), vec!(4,5,66))
-		);
-		hm::with(|hm| println!("test reading storage is key 0,1,22 in there? {:?}", hm.contains_key(&vec!(0,1,22)) ));
-
+		println!("read_storage({})", String::from_utf8(key.to_vec()).unwrap());
 		hm::with(|hm| println!("test reading storage is key 0,1,2 in there? {:?}", hm.contains_key(&vec!(0,1,2)) ));
 
 		hm::with(|hm| hm.get(&vec!(0,1,2)).map(|s| println!("test reading storage key 0,1,2 which reads: {:?}", s.to_vec())));
@@ -140,7 +135,7 @@ impl StorageApi for () {
 	}
 
 	fn set_storage(key: &[u8], value: &[u8]) {
-		println!("set_storage({:x?}, {:x?})", key, value);
+		println!("set_storage({}, {:x?})", String::from_utf8(key.to_vec()).unwrap(), value);
 		hm::with(|hm|
 			hm.insert(key.to_vec(), value.to_vec())
 		);
@@ -324,7 +319,7 @@ impl Api for () {}
 /// externalities `ext`. Forwards the value that the closure returns.
 // NOTE: need a concrete hasher here due to limitations of the `environmental!` macro, otherwise a type param would have been fine I think.
 pub fn with_externalities<R, F: FnOnce() -> R>(ext: &mut Externalities<Blake2Hasher>, f: F) -> R {
-	ext::using(ext, f)
+	hm::using(ext, f)
 }
 */
 

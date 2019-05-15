@@ -33,7 +33,8 @@ environmental = { version = "1.0.1", default-features= false, optional = true }
 substrate-state-machine = { path = "../state-machine", optional = true }
 trie = { package = "substrate-trie", path = "../trie", optional = true }
 #
-twox-hash = { git = "https://github.com/shepmaster/twox-hash.git", branch="no-std", default-features = false, optional = true }
+#twox-hash = { git = "https://github.com/shepmaster/twox-hash.git", branch="no-std", default-features = false, optional = true }
+twox-hash = { git = "https://github.com/shepmaster/twox-hash.git", optional = true }
 
 [features]
 default = ["std"]
@@ -46,7 +47,7 @@ std = [
 	"environmental/std",
 	"substrate-state-machine",
 	"libsecp256k1",
-	"tiny-keccak"
+	"tiny-keccak",
 ]
 nightly = []
 strict = []
