@@ -62,19 +62,24 @@ pub fn save<T: Trait>(
 ) -> Result<CodeHash<T>, &'static str> {
 	// The first time instrumentation is on the user. However, consequent reinstrumentation
 	// due to the schedule changes is on governance system.
+	runtime_io::print("wasm::code_cache::save: called");
+	
 	if gas_meter
 		.charge(schedule, PutCodeToken(original_code.len() as u64))
 		.is_out_of_gas()
 	{
+		runtime_io::print("wasm::code_cache::save: there is not enough gas for storing the code");
 		return Err("there is not enough gas for storing the code");
 	}
-
+	runtime_io::print("wasm::code_cache::save: gasmeter ok");
 	let prefab_module = prepare::prepare_contract::<T, Env>(&original_code, schedule)?;
+	runtime_io::print("wasm::code_cache::save: returned from prepare_contract");
 	let code_hash = T::Hashing::hash(&original_code);
-
+	runtime_io::print("wasm::code_cache::save: returned from hash");
 	<CodeStorage<T>>::insert(code_hash, prefab_module);
+	runtime_io::print("wasm::code_cache::save: inserted code int CodeStorage");
 	<PristineCode<T>>::insert(code_hash, original_code);
-
+	runtime_io::print("wasm::code_cache::save: inserted code into PristineCode");
 	Ok(code_hash)
 }
 
