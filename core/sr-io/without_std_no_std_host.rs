@@ -110,14 +110,14 @@ fn child_storage_key_or_panic(storage_key: &[u8]) -> ChildStorageKey<Blake2Hashe
 */
 impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
-		println!("storage({})", String::from_utf8(key.to_vec()).unwrap());
+		println!("storage('{:?}')", key);
 		hm::with(|hm| hm.get(key).map(|s| s.to_vec()))
 			.expect("storage cannot be called outside of an Externalities-provided environment.")
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
-		println!("read_storage({})", String::from_utf8(key.to_vec()).unwrap());
-		hm::with(|hm| println!("test reading storage is key 0,1,2 in there? {:?}", hm.contains_key(&vec!(0,1,2)) ));
+		println!("read_storage('{:?}')", key);
+		hm::with(|hm| println!("test reading storage is key 'dummy' in there? {:?}", hm.contains_key(&vec!(114, 244, 120, 86, 194, 147, 166, 238, 151, 164, 221, 80, 216, 169, 209, 190)) ));
 
 		hm::with(|hm| hm.get(&vec!(0,1,2)).map(|s| println!("test reading storage key 0,1,2 which reads: {:?}", s.to_vec())));
 		
@@ -135,7 +135,7 @@ impl StorageApi for () {
 	}
 
 	fn set_storage(key: &[u8], value: &[u8]) {
-		println!("set_storage({}, {:x?})", String::from_utf8(key.to_vec()).unwrap(), value);
+		println!("set_storage('{:?}', {:x?})", key, value);
 		hm::with(|hm|
 			hm.insert(key.to_vec(), value.to_vec())
 		);
