@@ -46,7 +46,7 @@ use environmental::environmental;
 
 use std::collections::HashMap;
 
-environmental!(hm: HashMap<Vec<u8>, Vec<u8>>);
+environmental!(hm: HashMap<Vec<u8>, Vec<u8>> = HashMap::new());
 
 /*use twox_hash;
 
