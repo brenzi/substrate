@@ -15,7 +15,7 @@
 // along with Substrate.  If not, see <http://www.gnu.org/licenses/>.
 
 use primitives::hashing::{
-	twox_128, twox_256, twox_64
+	blake2_128, blake2_256, twox_128, twox_256, twox_64
 };
 /*
 #[doc(hidden)]

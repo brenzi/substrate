@@ -19,7 +19,8 @@ hash-db = { version = "0.12", default-features = false }
 hash256-std-hasher = { version = "0.12", default-features = false }
 ed25519-dalek = { version = "1.0.0-pre.1", optional = true }
 base58 = { version = "0.1", optional = true }
-blake2-rfc = { version = "0.2.18", optional = true }
+#blake2-rfc = { version = "0.2.18", default-features = false, optional = true }
+blake2-rfc = { git = "https://github.com/brenzi/blake2-rfc.git", default-features = false, optional = true }
 schnorrkel = { version = "0.1", optional = true }
 rand = { version = "0.6", optional = true }
 sha2 = { version = "0.8", optional = true }
@@ -60,7 +61,7 @@ std = [
 	"serde",
 	"rustc-hex/std",
 	"twox-hash/std",
-	"blake2-rfc",
+	"blake2-rfc/std",
 	"ed25519-dalek",
 	"hex",
 	"base58",
@@ -74,5 +75,6 @@ std = [
 	"regex",
 ]
 sgx = [
-	"twox-hash"
+	"twox-hash",
+	"blake2-rfc"
 ]
