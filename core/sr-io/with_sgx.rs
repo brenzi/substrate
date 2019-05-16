@@ -114,16 +114,22 @@ impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
 		println!("storage('{:?}')", key);
 		//hm::with(|hm| println!("key exists?: {:?}", hm.contains_key(key)));
-		hm::with(|hm| hm.get(key).map(|s| s.to_vec()))
+		hm::with(|hm| hm.get(key).map(|s| {
+			println!("  returning {:?}", s);
+			s.to_vec()
+		}))
 			.expect("storage cannot be called outside of an Externalities-provided environment.")
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
-		println!("read_storage('{:?}')", key);
+		println!("read_storage('{:?}' with offset =  {:?})", key, value_offset);
 		hm::with(|hm| hm.get(key).map(|value| {
+			println!("  entire stored value: {:?}", value);
 			let value = &value[value_offset..];
+			println!("  stored value at offset: {:?}", value);
 			let written = std::cmp::min(value.len(), value_out.len());
 			value_out[..written].copy_from_slice(&value[..written]);
+			println!("  returning {:?}", value_out);
 			value.len()
 		})).expect("read_storage cannot be called outside of an Externalities-provided environment.")
 	}
