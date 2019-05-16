@@ -122,7 +122,7 @@ impl StorageApi for () {
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
-		println!("read_storage('{:?}' with offset =  {:?})", key, value_offset);
+		println!("read_storage('{:?}' with offset =  {:?}. value_out.len() is {})", key, value_offset, value_out.len());
 		hm::with(|hm| hm.get(key).map(|value| {
 			println!("  entire stored value: {:?}", value);
 			let value = &value[value_offset..];
