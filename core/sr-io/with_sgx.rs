@@ -287,27 +287,37 @@ impl HashingApi for () {
 
 	fn blake2_128(data: &[u8]) -> [u8; 16] {
 		println!("blake2_128 of {:x?}", data);
-		blake2_128(data)
+		let hash = blake2_128(data);
+		println!("  returning {:?}", hash);
+		hash
 	}
 
 	fn blake2_256(data: &[u8]) -> [u8; 32] {
 		println!("blake2_256 of {:x?}", data);
-		blake2_256(data)
+		let hash = blake2_256(data);
+		println!("  returning {:?}", hash);
+		hash
 	}
 
 	fn twox_256(data: &[u8]) -> [u8; 32] {
 		println!("twox_256 of {:x?}", data);
-		twox_256(data)
+		let hash = twox_256(data);
+		println!("  returning {:?}", hash);
+		hash
 	}
 
 	fn twox_128(data: &[u8]) -> [u8; 16] {
 		println!("twox_128 of {:x?}", data);
-		twox_128(data)
+		let hash = twox_128(data);
+		println!("  returning {:?}", hash);
+		hash
 	}
 
 	fn twox_64(data: &[u8]) -> [u8; 8] {
 		println!("twox_64 of {:x?}", data);
-		twox_64(data)
+		let hash = twox_64(data);
+		println!("  returning {:?}", hash);
+		hash
 	}
 }
 
