@@ -60,3 +60,4 @@ sgx = [
 	"primitives/sgx",
 	"environmental"
 ]
+debug = []

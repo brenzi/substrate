@@ -357,9 +357,9 @@ decl_module! {
 			if let Ok(code_hash) = result {
 				Self::deposit_event(RawEvent::CodeStored(code_hash));
 			}
-
+			runtime_io::print("put_code: code_hash sent as event");
 			gas::refund_unused_gas::<T>(&origin, gas_meter, imbalance);
-
+			runtime_io::print("put_code: unused gas refunded");
 			result.map(|_| ())
 		}
 
@@ -380,16 +380,15 @@ decl_module! {
 			runtime_io::print("call(): called");
 
 			let origin = ensure_signed(origin)?;
-			runtime_io::print("call(): origin ok");
 
 			let dest = T::Lookup::lookup(dest)?;
-			runtime_io::print("call(): lookup done");
 
 			// Pay for the gas upfront.
 			//
 			// NOTE: it is very important to avoid any state changes before
 			// paying for the gas.
 			let (mut gas_meter, imbalance) = gas::buy_gas::<T>(&origin, gas_limit)?;
+			runtime_io::print("call(): buy_gas_done");
 
 			let cfg = Config::preload();
 			let vm = crate::wasm::WasmVm::new(&cfg.schedule);

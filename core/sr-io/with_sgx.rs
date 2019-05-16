@@ -112,7 +112,7 @@ fn child_storage_key_or_panic(storage_key: &[u8]) -> ChildStorageKey<Blake2Hashe
 */
 impl StorageApi for () {
 	fn storage(key: &[u8]) -> Option<Vec<u8>> {
-		println!("storage('{:?}')", key);
+		#[cfg(feature = "debug")] println!("storage('{:?}')", key);
 		//hm::with(|hm| println!("key exists?: {:?}", hm.contains_key(key)));
 		hm::with(|hm| hm.get(key).map(|s| {
 			println!("  returning {:?}", s);
@@ -122,14 +122,15 @@ impl StorageApi for () {
 	}
 
 	fn read_storage(key: &[u8], value_out: &mut [u8], value_offset: usize) -> Option<usize> {
+		#[cfg(feature = "debug")]
 		println!("read_storage('{:?}' with offset =  {:?}. value_out.len() is {})", key, value_offset, value_out.len());
 		hm::with(|hm| hm.get(key).map(|value| {
-			println!("  entire stored value: {:?}", value);
+			#[cfg(feature = "debug")] println!("  entire stored value: {:?}", value);
 			let value = &value[value_offset..];
-			println!("  stored value at offset: {:?}", value);
+			#[cfg(feature = "debug")] println!("  stored value at offset: {:?}", value);
 			let written = std::cmp::min(value.len(), value_out.len());
 			value_out[..written].copy_from_slice(&value[..written]);
-			println!("  write back {:?}, return len {}", value_out, value.len());
+			#[cfg(feature = "debug")] println!("  write back {:?}, return len {}", value_out, value.len());
 			value.len()
 		})).expect("read_storage cannot be called outside of an Externalities-provided environment.")
 	}
@@ -140,7 +141,7 @@ impl StorageApi for () {
 	}
 
 	fn set_storage(key: &[u8], value: &[u8]) {
-		println!("set_storage('{:?}', {:x?})", key, value);
+		#[cfg(feature = "debug")] println!("set_storage('{:?}', {:x?})", key, value);
 		hm::with(|hm|
 			hm.insert(key.to_vec(), value.to_vec())
 		);
@@ -286,37 +287,37 @@ impl HashingApi for () {
 	}
 
 	fn blake2_128(data: &[u8]) -> [u8; 16] {
-		println!("blake2_128 of {:x?}", data);
+		#[cfg(feature = "debug")] println!("blake2_128 of {:x?}", data);
 		let hash = blake2_128(data);
-		println!("  returning {:?}", hash);
+		#[cfg(feature = "debug")] println!("  returning {:?}", hash);
 		hash
 	}
 
 	fn blake2_256(data: &[u8]) -> [u8; 32] {
-		println!("blake2_256 of {:x?}", data);
+		#[cfg(feature = "debug")] println!("blake2_256 of {:x?}", data);
 		let hash = blake2_256(data);
-		println!("  returning {:?}", hash);
+		#[cfg(feature = "debug")] println!("  returning {:?}", hash);
 		hash
 	}
 
 	fn twox_256(data: &[u8]) -> [u8; 32] {
-		println!("twox_256 of {:x?}", data);
+		#[cfg(feature = "debug")] println!("twox_256 of {:x?}", data);
 		let hash = twox_256(data);
-		println!("  returning {:?}", hash);
+		#[cfg(feature = "debug")] println!("  returning {:?}", hash);
 		hash
 	}
 
 	fn twox_128(data: &[u8]) -> [u8; 16] {
-		println!("twox_128 of {:x?}", data);
+		#[cfg(feature = "debug")] println!("twox_128 of {:x?}", data);
 		let hash = twox_128(data);
-		println!("  returning {:?}", hash);
+		#[cfg(feature = "debug")] println!("  returning {:?}", hash);
 		hash
 	}
 
 	fn twox_64(data: &[u8]) -> [u8; 8] {
-		println!("twox_64 of {:x?}", data);
+		#[cfg(feature = "debug")] println!("twox_64 of {:x?}", data);
 		let hash = twox_64(data);
-		println!("  returning {:?}", hash);
+		#[cfg(feature = "debug")] println!("  returning {:?}", hash);
 		hash
 	}
 }
