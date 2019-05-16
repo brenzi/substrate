@@ -129,7 +129,7 @@ impl StorageApi for () {
 			println!("  stored value at offset: {:?}", value);
 			let written = std::cmp::min(value.len(), value_out.len());
 			value_out[..written].copy_from_slice(&value[..written]);
-			println!("  returning {:?}", value_out);
+			println!("  write back {:?}, return len {}", value_out, value.len());
 			value.len()
 		})).expect("read_storage cannot be called outside of an Externalities-provided environment.")
 	}
