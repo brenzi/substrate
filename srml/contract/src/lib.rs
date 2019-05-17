@@ -22,6 +22,7 @@
 //! - [`Call`](./enum.Call.html)
 //!
 //! ## Overview
+//! ## Overviewe
 //!
 //! This module extends accounts based on the `Currency` trait to have smart-contract functionality. It can
 //! be used with other modules that implement accounts based on `Currency`. These "smart-contract accounts"

@@ -115,7 +115,7 @@ impl StorageApi for () {
 		#[cfg(feature = "debug")] println!("storage('{:?}')", key);
 		//hm::with(|hm| println!("key exists?: {:?}", hm.contains_key(key)));
 		hm::with(|hm| hm.get(key).map(|s| {
-			println!("  returning {:?}", s);
+			#[cfg(feature = "debug")] println!("  returning {:?}", s);
 			s.to_vec()
 		}))
 			.expect("storage cannot be called outside of an Externalities-provided environment.")
