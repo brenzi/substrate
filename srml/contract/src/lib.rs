@@ -444,6 +444,7 @@ decl_module! {
 			code_hash: CodeHash<T>,
 			data: Vec<u8>
 		) -> Result {
+			runtime_io::print("contract::create(): called");
 			let origin = ensure_signed(origin)?;
 
 			// Commit the gas upfront.
@@ -451,13 +452,17 @@ decl_module! {
 			// NOTE: It is very important to avoid any state changes before
 			// paying for the gas.
 			let (mut gas_meter, imbalance) = gas::buy_gas::<T>(&origin, gas_limit)?;
-
+			runtime_io::print("contract::create(): buoght gas");
 			let cfg = Config::preload();
+			runtime_io::print("contract::create(): config preloaded");
 			let vm = crate::wasm::WasmVm::new(&cfg.schedule);
+			runtime_io::print("contract::create(): new vm");
 			let loader = crate::wasm::WasmLoader::new(&cfg.schedule);
+			runtime_io::print("contract::create(): new loader");
 			let mut ctx = ExecutionContext::top_level(origin.clone(), &cfg, &vm, &loader);
+			runtime_io::print("contract::create(): context");
 			let result = ctx.instantiate(endowment, &mut gas_meter, &code_hash, &data);
-
+			runtime_io::print("contract::create(): instantiated");
 			if let Ok(_) = result {
 				// Commit all changes that made it thus far into the persistent storage.
 				DirectAccountDb.commit(ctx.overlay.into_change_set());
