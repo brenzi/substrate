@@ -407,6 +407,8 @@ decl_module! {
 
 				// Then deposit all events produced.
 				ctx.events.into_iter().for_each(Self::deposit_event);
+			} else {
+				runtime_io::print("call(): execution returned NOT OK");
 			}
 
 			// Refund cost of the unused gas.
