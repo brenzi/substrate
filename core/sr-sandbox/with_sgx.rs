@@ -18,7 +18,7 @@ use std::collections::btree_map::BTreeMap;
 use std::fmt;
 use std::{vec::Vec, boxed::Box};
 
-use crate::alloc::borrow::ToOwned;
+use std::borrow::ToOwned;
 
 use wasmi::{
 	Externals, FuncInstance, FuncRef, GlobalDescriptor, GlobalRef, ImportResolver,

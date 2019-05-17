@@ -8,13 +8,12 @@ edition = "2018"
 [build-dependencies]
 rustc_version = "0.2"
 
-[target.'cfg(not(target_env = "sgx"))'.dependencies]
-sgx_tstd = { git = "https://github.com/baidu/rust-sgx-sdk" }
-
 [dependencies]
-wasmi = { version = "0.4.3", optional = true }
+wasmi = { git = "https://github.com/paritytech/wasmi.git", default-features = false, optional = true }
+#wasmi-validation = { version = "0.1.0", default-features = false, optional = true }
 primitives = { package = "substrate-primitives", path = "../primitives", default-features = false }
 rstd = { package = "sr-std", path = "../sr-std", default-features = false }
+sgx_tstd = { git = "https://github.com/baidu/rust-sgx-sdk", optional = true }
 codec = { package = "parity-codec", version = "3.2", default-features = false }
 
 [dev-dependencies]
@@ -24,7 +23,7 @@ assert_matches = "1.1"
 [features]
 default = ["std"]
 std = [
-	"wasmi",
+	"wasmi/std",
 	"primitives/std",
 	"rstd/std",
 	"codec/std",
@@ -32,7 +31,9 @@ std = [
 nightly = []
 strict = []
 sgx = [
-	"wasmi",
+	"sgx_tstd",
+	"wasmi/core",
+#	"wasmi-validation/core",
 	"primitives/sgx",
 ]	
 
