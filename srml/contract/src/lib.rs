@@ -402,6 +402,7 @@ decl_module! {
 			let result = ctx.call(dest, value, &mut gas_meter, &data, exec::EmptyOutputBuf::new());
 			runtime_io::print("call(): ctx.call executed");
 			if let Ok(_) = result {
+				runtime_io::print("call(): execution returned OK");
 				// Commit all changes that made it thus far into the persistent storage.
 				DirectAccountDb.commit(ctx.overlay.into_change_set());
 
@@ -416,7 +417,7 @@ decl_module! {
 			// NOTE: This should go after the commit to the storage, since the storage changes
 			// can alter the balance of the caller.
 			gas::refund_unused_gas::<T>(&origin, gas_meter, imbalance);
-
+			runtime_io::print("call(): unused gas refunded");
 			// Dispatch every recorded call with an appropriate origin.
 			ctx.calls.into_iter().for_each(|(who, call)| {
 				let result = call.dispatch(RawOrigin::Signed(who.clone()).into());
