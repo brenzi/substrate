@@ -308,7 +308,7 @@ where
 		// pay_rent will be done on first call and dest contract and balance
 		// cannot be changed before the first call
 		crate::rent::pay_rent::<T>(&dest);
-
+		runtime_io::print("call::ctx:call(): paid rent");
 		let mut output_data = Vec::new();
 
 		let (change_set, events, calls) = {
@@ -326,7 +326,9 @@ where
 					value,
 					&mut nested,
 				)?;
+				runtime_io::print("call::ctx:call(): transferred sent value");
 			}
+			
 
 			if let Some(dest_code_hash) = self.overlay.get_code_hash(&dest) {
 				let executable = self.loader.load_main(&dest_code_hash)?;
@@ -346,6 +348,9 @@ where
 						gas_meter,
 					)
 					.into_result()?;
+				runtime_io::print("call::ctx:call(): executed call");
+			} else {
+				runtime_io::print("call::ctx:call(): overlay code hash NOT OK?");
 			}
 
 			(nested.overlay.into_change_set(), nested.events, nested.calls)
