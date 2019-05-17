@@ -392,12 +392,15 @@ decl_module! {
 			runtime_io::print("call(): buy_gas_done");
 
 			let cfg = Config::preload();
+			runtime_io::print("call(): config preload done");
 			let vm = crate::wasm::WasmVm::new(&cfg.schedule);
+			runtime_io::print("call(): new vm created");
 			let loader = crate::wasm::WasmLoader::new(&cfg.schedule);
+			runtime_io::print("call(): new loader created");
 			let mut ctx = ExecutionContext::top_level(origin.clone(), &cfg, &vm, &loader);
-
+			runtime_io::print("call(): execution context created");
 			let result = ctx.call(dest, value, &mut gas_meter, &data, exec::EmptyOutputBuf::new());
-
+			runtime_io::print("call(): ctx.call executed");
 			if let Ok(_) = result {
 				// Commit all changes that made it thus far into the persistent storage.
 				DirectAccountDb.commit(ctx.overlay.into_change_set());
