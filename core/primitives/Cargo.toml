@@ -75,6 +75,7 @@ std = [
 	"regex",
 ]
 sgx = [
+	"wasmi",
 	"twox-hash",
 	"blake2-rfc"
 ]

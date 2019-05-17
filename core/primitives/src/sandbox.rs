@@ -55,7 +55,7 @@ impl TypedValue {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl From<::wasmi::RuntimeValue> for TypedValue {
 	fn from(val: ::wasmi::RuntimeValue) -> TypedValue {
 		use ::wasmi::RuntimeValue;
@@ -68,7 +68,7 @@ impl From<::wasmi::RuntimeValue> for TypedValue {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl From<TypedValue> for ::wasmi::RuntimeValue {
 	fn from(val: TypedValue) -> ::wasmi::RuntimeValue {
 		use ::wasmi::RuntimeValue;

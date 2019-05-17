@@ -33,10 +33,14 @@ extern crate alloc;
 use hash_db::Hasher;
 
 
+#[cfg(feature = "sgx")]
 #[macro_use]
 extern crate sgx_tstd as std;
+#[cfg(feature = "sgx")]
 use std::prelude::v1::*;
-//use rstd::vec::Vec;
+
+#[cfg(not(feature = "sgx"))]
+use rstd::vec::Vec;
 
 #[doc(hidden)]
 pub use codec;

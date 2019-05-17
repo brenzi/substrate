@@ -14,46 +14,42 @@
 // You should have received a copy of the GNU General Public License
 // along with Substrate.  If not, see <http://www.gnu.org/licenses/>.
 
+use std::collections::btree_map::BTreeMap;
+use std::fmt;
+use std::{vec::Vec, boxed::Box};
 
-use rstd::prelude::*;
-use rstd::{slice, marker, mem};
-use rstd::rc::Rc;
-use rstd::vec::Vec;
-use codec::{Decode, Encode};
-use primitives::sandbox as sandbox_primitives;
+use crate::alloc::borrow::ToOwned;
 
-
-use rstd::collections::btree_map::BTreeMap;
-//use rstd::fmt;
-
-/*
 use wasmi::{
 	Externals, FuncInstance, FuncRef, GlobalDescriptor, GlobalRef, ImportResolver,
 	MemoryDescriptor, MemoryInstance, MemoryRef, Module, ModuleInstance, ModuleRef,
 	RuntimeArgs, RuntimeValue, Signature, TableDescriptor, TableRef, Trap, TrapKind
 };
 use wasmi::memory_units::Pages;
-*/
-
-use super::{Error, TypedValue, ReturnValue, HostFuncType};
+use super::{Error, TypedValue, ReturnValue, HostFuncType, HostError};
 
 #[derive(Clone)]
 pub struct Memory {
+	memref: MemoryRef,
 }
 
 impl Memory {
 	pub fn new(initial: u32, maximum: Option<u32>) -> Result<Memory, Error> {
-		//print("sr-sandbox::Memory::new unimplemented");
-		Ok(Memory{ })
+		Ok(Memory {
+			memref: MemoryInstance::alloc(
+				Pages(initial as usize),
+				maximum.map(|m| Pages(m as usize)),
+			).map_err(|_| Error::Module)?,
+		})
 	}
 
 	pub fn get(&self, ptr: u32, buf: &mut [u8]) -> Result<(), Error> {
-		//print("sr-sandbox::Memory::get unimplemented");
+		self.memref.get_into(ptr, buf).map_err(|_| Error::OutOfBounds)?;
 		Ok(())
 	}
 
 	pub fn set(&self, ptr: u32, value: &[u8]) -> Result<(), Error> {
-		//print("sr-sandbox::Memory::set unimplemented");
+		self.memref.set(ptr, value).map_err(|_| Error::OutOfBounds)?;
 		Ok(())
 	}
 }
@@ -85,7 +81,7 @@ impl<T> DefinedHostFunctions<T> {
 		HostFuncIndex(idx)
 	}
 }
-/*
+
 #[derive(Debug)]
 struct DummyHostError;
 
@@ -97,9 +93,26 @@ impl fmt::Display for DummyHostError {
 
 impl wasmi::HostError for DummyHostError {
 }
-*/
 
-/*
+fn from_runtime_value(v: RuntimeValue) -> TypedValue {
+	match v {
+		RuntimeValue::I32(v) => TypedValue::I32(v),
+		RuntimeValue::I64(v) => TypedValue::I64(v),
+		RuntimeValue::F32(v) => TypedValue::F32(v.to_bits() as i32),
+		RuntimeValue::F64(v) => TypedValue::F64(v.to_bits() as i64),
+	}
+}
+
+fn to_runtime_value(v: TypedValue) -> RuntimeValue {
+	use wasmi::nan_preserving_float::{F32, F64};
+	match v {
+		TypedValue::I32(v) => RuntimeValue::I32(v as i32),
+		TypedValue::I64(v) => RuntimeValue::I64(v as i64),
+		TypedValue::F32(v_bits) => RuntimeValue::F32(F32::from_bits(v_bits as u32)),
+		TypedValue::F64(v_bits) => RuntimeValue::F64(F64::from_bits(v_bits as u64)),
+	}
+}
+
 struct GuestExternals<'a, T: 'a> {
 	state: &'a mut T,
 	defined_host_functions: &'a DefinedHostFunctions<T>,
@@ -123,11 +136,11 @@ impl<'a, T> Externals for GuestExternals<'a, T> {
 				ReturnValue::Value(v) => Some(to_runtime_value(v)),
 				ReturnValue::Unit => None,
 			}),
-			Err(_) => Err(()).into(),
+			Err(HostError) => Err(TrapKind::Host(Box::new(DummyHostError)).into()),
 		}
 	}
 }
-*/
+
 enum ExternVal {
 	HostFunc(HostFuncIndex),
 	Memory(Memory),
@@ -166,28 +179,30 @@ impl<T> EnvironmentDefinitionBuilder<T> {
 	}
 }
 
-/*
 impl<T> ImportResolver for EnvironmentDefinitionBuilder<T> {
 	fn resolve_func(
 		&self,
 		module_name: &str,
 		field_name: &str,
 		signature: &Signature,
-	) -> Result<FuncRef, Error> {
+	) -> Result<FuncRef, wasmi::Error> {
 		let key = (
 			module_name.as_bytes().to_owned(),
 			field_name.as_bytes().to_owned(),
 		);
 		let externval = self.map.get(&key).ok_or_else(|| {
-			Error::default()
+			wasmi::Error::Instantiation(format!("Export {}:{} not found", module_name, field_name))
 		})?;
 		let host_func_idx = match *externval {
 			ExternVal::HostFunc(ref idx) => idx,
 			_ => {
-				return Err(Error::default())
+				return Err(wasmi::Error::Instantiation(format!(
+					"Export {}:{} is not a host func",
+					module_name, field_name
+				)))
 			}
 		};
-		Ok(())
+		Ok(FuncInstance::alloc_host(signature.clone(), host_func_idx.0))
 	}
 
 	fn resolve_global(
@@ -195,8 +210,10 @@ impl<T> ImportResolver for EnvironmentDefinitionBuilder<T> {
 		_module_name: &str,
 		_field_name: &str,
 		_global_type: &GlobalDescriptor,
-	) -> Result<GlobalRef, Error> {
-		Err(Error::default())
+	) -> Result<GlobalRef, wasmi::Error> {
+		Err(wasmi::Error::Instantiation(format!(
+			"Importing globals is not supported yet"
+		)))
 	}
 
 	fn resolve_memory(
@@ -204,18 +221,21 @@ impl<T> ImportResolver for EnvironmentDefinitionBuilder<T> {
 		module_name: &str,
 		field_name: &str,
 		_memory_type: &MemoryDescriptor,
-	) -> Result<MemoryRef, Error> {
+	) -> Result<MemoryRef, wasmi::Error> {
 		let key = (
 			module_name.as_bytes().to_owned(),
 			field_name.as_bytes().to_owned(),
 		);
 		let externval = self.map.get(&key).ok_or_else(|| {
-			Error::default()
+			wasmi::Error::Instantiation(format!("Export {}:{} not found", module_name, field_name))
 		})?;
 		let memory = match *externval {
 			ExternVal::Memory(ref m) => m,
 			_ => {
-				return Err(Error::default())
+				return Err(wasmi::Error::Instantiation(format!(
+					"Export {}:{} is not a memory",
+					module_name, field_name
+				)))
 			}
 		};
 		Ok(memory.memref.clone())
@@ -226,22 +246,40 @@ impl<T> ImportResolver for EnvironmentDefinitionBuilder<T> {
 		_module_name: &str,
 		_field_name: &str,
 		_table_type: &TableDescriptor,
-	) -> Result<TableRef, Error> {
-		Err(Error::default())
+	) -> Result<TableRef, wasmi::Error> {
+		Err(wasmi::Error::Instantiation(format!(
+			"Importing tables is not supported yet"
+		)))
 	}
 }
-*/
 
-#[derive(Default)]
 pub struct Instance<T> {
-	_marker: ::core::marker::PhantomData<T>,
+	instance: ModuleRef,
+	defined_host_functions: DefinedHostFunctions<T>,
+	_marker: ::std::marker::PhantomData<T>,
 }
 
 impl<T> Instance<T> {
 	pub fn new(code: &[u8], env_def_builder: &EnvironmentDefinitionBuilder<T>, state: &mut T) -> Result<Instance<T>, Error> {
-		//print("sr_sandbox::Instance::new unimplemented");
+		let module = Module::from_buffer(code).map_err(|_| Error::Module)?;
+		let not_started_instance = ModuleInstance::new(&module, env_def_builder)
+			.map_err(|_| Error::Module)?;
+
+
+		let defined_host_functions = env_def_builder.defined_host_functions.clone();
+		let instance = {
+			let mut externals = GuestExternals {
+				state,
+				defined_host_functions: &defined_host_functions,
+			};
+			let instance = not_started_instance.run_start(&mut externals).map_err(|_| Error::Execution)?;
+			instance
+		};
+
 		Ok(Instance {
-			_marker: ::core::marker::PhantomData::<T>,
+			instance,
+			defined_host_functions,
+			_marker: ::std::marker::PhantomData::<T>,
 		})
 	}
 
@@ -251,10 +289,21 @@ impl<T> Instance<T> {
 		args: &[TypedValue],
 		state: &mut T,
 	) -> Result<ReturnValue, Error> {
-		let mut return_val = vec![0u8; sandbox_primitives::ReturnValue::ENCODED_MAX_SIZE];
-		let return_val = sandbox_primitives::ReturnValue::decode(&mut &return_val[..]).unwrap();
-		//print("sr_sandbox::Instance::invoke unimplemented");
-		Ok(return_val)
+		let args = args.iter().cloned().map(Into::into).collect::<Vec<_>>();
+
+		let name = ::std::str::from_utf8(name).map_err(|_| Error::Execution)?;
+		let mut externals = GuestExternals {
+			state,
+			defined_host_functions: &self.defined_host_functions,
+		};
+		let result = self.instance
+			.invoke_export(&name, &args, &mut externals);
+
+		match result {
+			Ok(None) => Ok(ReturnValue::Unit),
+			Ok(Some(val)) => Ok(ReturnValue::Value(val.into())),
+			Err(_err) => Err(Error::Execution),
+		}
 	}
 }
 

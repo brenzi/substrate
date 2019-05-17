@@ -42,6 +42,13 @@
 #[macro_use]
 extern crate alloc;
 
+#[cfg(feature = "sgx")]
+#[macro_use]
+extern crate sgx_tstd as std;
+#[cfg(feature = "sgx")]
+use std::prelude::v1::*;
+
+#[cfg(not(feature = "sgx"))]
 use rstd::prelude::*;
 
 pub use primitives::sandbox::{TypedValue, ReturnValue, HostError};
@@ -50,11 +57,11 @@ mod imp {
 	#[cfg(feature = "std")]
 	include!("../with_std.rs");
 
-	#[cfg(all(not(feature = "std"), not(feature = "no_std_host")))]
+	#[cfg(all(not(feature = "std"), not(feature = "sgx")))]
 	include!("../without_std.rs");
 
-	#[cfg(all(not(feature = "std"), feature = "no_std_host"))]
-	include!("../without_std_no_std_host.rs");
+	#[cfg(all(not(feature = "std"), feature = "sgx"))]
+	include!("../with_sgx.rs");
 }
 
 /// Error that can occur while using this crate.
