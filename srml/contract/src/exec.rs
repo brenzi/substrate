@@ -370,6 +370,7 @@ where
 		code_hash: &CodeHash<T>,
 		input_data: &[u8],
 	) -> Result<InstantiateReceipt<T::AccountId>, &'static str> {
+		runtime_io::print("contract::call::ctx::instantiate(): called");
 		if self.depth == self.config.max_depth as usize {
 			return Err("reached maximum depth, cannot create");
 		}
@@ -404,8 +405,9 @@ where
 				endowment,
 				&mut nested,
 			)?;
-
+			runtime_io::print("contract::call::ctx::instantiate(): transfer done");
 			let executable = self.loader.load_init(&code_hash)?;
+			runtime_io::print("contract::call::ctx::instantiate(): load_init done");
 			self.vm
 				.execute(
 					&executable,
@@ -421,7 +423,7 @@ where
 					gas_meter,
 				)
 				.into_result()?;
-
+			runtime_io::print("contract::call::ctx::instantiate(): executed");
 			// Deposit an instantiation event.
 			nested.events.push(RawEvent::Instantiated(self.self_account.clone(), dest.clone()));
 
