@@ -150,14 +150,19 @@ impl<'a, T: Trait> crate::exec::Vm<T> for WasmVm<'a, T> {
 			// No errors or traps were generated on instantiation! That
 			// means we can now invoke the contract entrypoint.
 			Ok(mut instance) => {
+				runtime_io::print("contract::wasm::WasmVm::execute(): instance Ok");
 				let err = instance
 					.invoke(exec.entrypoint_name, &[], &mut runtime)
 					.err();
 				to_execution_result(runtime, err)
 			}
 			// `start` function trapped. Treat it in the same manner as an execution error.
-			Err(err @ sandbox::Error::Execution) => to_execution_result(runtime, Some(err)),
+			Err(err @ sandbox::Error::Execution) => { 
+				runtime_io::print("contract::wasm::WasmVm::execute(): Error::Execution");
+				to_execution_result(runtime, Some(err)),
+			}
 			Err(_err @ sandbox::Error::Module) => {
+				runtime_io::print("contract::wasm::WasmVm::execute(): Error::Module");
 				// `Error::Module` is returned only if instantiation or linking failed (i.e.
 				// wasm binary tried to import a function that is not provided by the host).
 				// This shouldn't happen because validation process ought to reject such binaries.
@@ -170,6 +175,7 @@ impl<'a, T: Trait> crate::exec::Vm<T> for WasmVm<'a, T> {
 			// Return without executing anything.
 			Err(_) => return VmExecResult::Trap("during start function"),
 		}
+		runtime_io::print("contract::wasm::WasmVm::execute(): returning");
 	}
 }
 
