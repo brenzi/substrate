@@ -13,7 +13,9 @@ twox-hash = { git = "https://github.com/shepmaster/twox-hash.git", default-featu
 byteorder = { version = "1.3.1", default-features = false }
 primitive-types = { version = "0.2", default-features = false, features = ["codec"] }
 impl-serde = { version = "0.1", optional = true }
-wasmi = { git = "https://github.com/paritytech/wasmi.git", default-features = false, optional = true }
+#wasmi = { git = "https://github.com/baidu/rust-sgx-sdk", default-features = false, optional = true }
+wasmi = { git = "https://github.com/paritytech/wasmi.git", rev = "5be300c99f81603f0e845443800418323d9b073a", default-features = false, optional = true }
+#wasmi = { version = "0.4.3", default-features = false, optional = true }
 hash-db = { version = "0.12", default-features = false }
 hash256-std-hasher = { version = "0.12", default-features = false }
 ed25519-dalek = { version = "1.0.0-pre.1", optional = true }
@@ -45,7 +47,8 @@ bench = false
 [features]
 default = ["std"]
 std = [
-	"wasmi/std",
+	"wasmi/std", #rust-sgx-sdk doesnt have this feature
+#	"wasmi",
 	"primitive-types/std",
 	"primitive-types/serde",
 	"primitive-types/heapsize",
@@ -74,7 +77,8 @@ std = [
 	"regex",
 ]
 sgx = [
-	"wasmi/core",
+	"wasmi/core", #rust-sgx-sdk doesnt have this feature
+#	"wasmi",
 	"twox-hash",
 	"blake2-rfc"
 ]
