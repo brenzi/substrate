@@ -157,9 +157,9 @@ impl<'a, T: Trait> crate::exec::Vm<T> for WasmVm<'a, T> {
 				to_execution_result(runtime, err)
 			}
 			// `start` function trapped. Treat it in the same manner as an execution error.
-			Err(err @ sandbox::Error::Execution) => { 
+			Err(err @ sandbox::Error::Execution) => {
 				runtime_io::print("contract::wasm::WasmVm::execute(): Error::Execution");
-				to_execution_result(runtime, Some(err)),
+				to_execution_result(runtime, Some(err))
 			}
 			Err(_err @ sandbox::Error::Module) => {
 				runtime_io::print("contract::wasm::WasmVm::execute(): Error::Module");
@@ -175,7 +175,6 @@ impl<'a, T: Trait> crate::exec::Vm<T> for WasmVm<'a, T> {
 			// Return without executing anything.
 			Err(_) => return VmExecResult::Trap("during start function"),
 		}
-		runtime_io::print("contract::wasm::WasmVm::execute(): returning");
 	}
 }
 
