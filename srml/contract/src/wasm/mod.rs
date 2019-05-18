@@ -114,6 +114,7 @@ impl<'a, T: Trait> crate::exec::Vm<T> for WasmVm<'a, T> {
 		empty_output_buf: EmptyOutputBuf,
 		gas_meter: &mut GasMeter<E::T>,
 	) -> VmExecResult {
+		runtime_io::print("contract::wasm::WasmVm::execute(): called");
 		let memory =
 			sandbox::Memory::new(exec.prefab_module.initial, Some(exec.prefab_module.maximum))
 				.unwrap_or_else(|_| {
@@ -125,12 +126,15 @@ impl<'a, T: Trait> crate::exec::Vm<T> for WasmVm<'a, T> {
 						qed"
 					)
 				});
-
+		runtime_io::print("contract::wasm::WasmVm::execute(): sandbox memory created");
 		let mut imports = sandbox::EnvironmentDefinitionBuilder::new();
+		runtime_io::print("contract::wasm::WasmVm::execute(): env built");
 		imports.add_memory("env", "memory", memory.clone());
+		runtime_io::print("contract::wasm::WasmVm::execute(): memory added");
 		runtime::Env::impls(&mut |name, func_ptr| {
 			imports.add_host_func("env", name, func_ptr);
 		});
+		runtime_io::print("contract::wasm::WasmVm::execute(): host func added");
 
 		let mut runtime = Runtime::new(
 			ext,
@@ -140,7 +144,7 @@ impl<'a, T: Trait> crate::exec::Vm<T> for WasmVm<'a, T> {
 			memory,
 			gas_meter,
 		);
-
+		runtime_io::print("contract::wasm::WasmVm::execute(): runtime created");
 		// Instantiate the instance from the instrumented module code.
 		match sandbox::Instance::new(&exec.prefab_module.code, &imports, &mut runtime) {
 			// No errors or traps were generated on instantiation! That

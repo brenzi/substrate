@@ -17,6 +17,13 @@
 use primitives::hashing::{
 	blake2_128, blake2_256, twox_128, twox_256, twox_64
 };
+
+#[macro_use]
+use std::fmt;
+#[macro_use]
+use std::vec::Vec;
+
+
 /*
 #[doc(hidden)]
 pub use rstd;

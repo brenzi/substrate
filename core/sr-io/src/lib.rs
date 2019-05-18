@@ -32,7 +32,6 @@ extern crate alloc;
 
 use hash_db::Hasher;
 
-
 #[cfg(feature = "sgx")]
 #[macro_use]
 extern crate sgx_tstd as std;

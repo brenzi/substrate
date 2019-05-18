@@ -34,15 +34,14 @@
 //! - implementing smart-contract runtimes that use wasm for contract code
 //! - executing a wasm substrate runtime inside of a wasm parachain
 
-#![no_std]
+
 #![warn(missing_docs)]
-//#![cfg_attr(not(feature = "std"), no_std)]
-//#![cfg_attr(not(feature = "std"), feature(core_intrinsics))]
+#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(not(feature = "std"), feature(core_intrinsics))]
 
-//#[cfg(not(any(feature = "std", feature = "sgx")))]
-//#[macro_use]
-//extern crate alloc;
-
+#[cfg(not(feature = "std"))]
+#[macro_use]
+extern crate alloc;
 
 #[cfg(feature = "sgx")]
 #[macro_use]
