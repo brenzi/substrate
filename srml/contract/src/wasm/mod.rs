@@ -154,6 +154,7 @@ impl<'a, T: Trait> crate::exec::Vm<T> for WasmVm<'a, T> {
 				let err = instance
 					.invoke(exec.entrypoint_name, &[], &mut runtime)
 					.err();
+				runtime_io::print("contract::wasm::WasmVm::execute(): instance invoked");
 				to_execution_result(runtime, err)
 			}
 			// `start` function trapped. Treat it in the same manner as an execution error.
