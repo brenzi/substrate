@@ -289,7 +289,7 @@ impl<T> Instance<T> {
 		args: &[TypedValue],
 		state: &mut T,
 	) -> Result<ReturnValue, Error> {
-		runtime_io::print("sr-sandbox::imp::invoke(): called");
+		println!("sr-sandbox::imp::invoke(): called");
 		let args = args.iter().cloned().map(Into::into).collect::<Vec<_>>();
 		println!("sr-sandbox::imp::invoke(): args = {:?}", args);
 		let name = ::std::str::from_utf8(name).map_err(|_| Error::Execution)?;
