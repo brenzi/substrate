@@ -10,8 +10,8 @@ rustc_version = "0.2"
 
 [dependencies]
 #wasmi = { git = "https://github.com/baidu/rust-sgx-sdk", default-features = false, optional = true }
-#wasmi = { git = "https://github.com/paritytech/wasmi.git", rev = "5be300c99f81603f0e845443800418323d9b073a", default-features = false, optional = true }
-wasmi = {git = "https://github.com/enigmampc/wasmi", branch="sgx-1.0.7", default-features = false, optional = true  }
+wasmi = { git = "https://github.com/paritytech/wasmi.git", rev = "5be300c99f81603f0e845443800418323d9b073a", default-features = false, optional = true }
+#wasmi = {git = "https://github.com/enigmampc/wasmi", branch="sgx-1.0.7", default-features = false, optional = true  }
 #wasmi = { version = "0.4.3", default-features = false, optional = true }
 #wasmi-validation = { version = "0.1.0", default-features = false, optional = true }
 primitives = { package = "substrate-primitives", path = "../primitives", default-features = false }
