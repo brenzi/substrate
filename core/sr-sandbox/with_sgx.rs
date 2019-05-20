@@ -291,16 +291,17 @@ impl<T> Instance<T> {
 	) -> Result<ReturnValue, Error> {
 		runtime_io::print("sr-sandbox::imp::invoke(): called");
 		let args = args.iter().cloned().map(Into::into).collect::<Vec<_>>();
-
+		println!("sr-sandbox::imp::invoke(): args = {:?}", args);
 		let name = ::std::str::from_utf8(name).map_err(|_| Error::Execution)?;
+		println!("sr-sandbox::imp::invoke(): name = {:?}", name);
 		let mut externals = GuestExternals {
 			state,
 			defined_host_functions: &self.defined_host_functions,
 		};
-		runtime_io::print("sr-sandbox::imp::invoke(): prepared");
+		println!("sr-sandbox::imp::invoke(): prepared with externals");
 		let result = self.instance
 			.invoke_export(&name, &args, &mut externals);
-		runtime_io::print("sr-sandbox::imp::invoke(): invoke_export() done");
+		println!("sr-sandbox::imp::invoke(): invoke_export() done. result is {:?}", result);
 		match result {
 			Ok(None) => Ok(ReturnValue::Unit),
 			Ok(Some(val)) => Ok(ReturnValue::Value(val.into())),
