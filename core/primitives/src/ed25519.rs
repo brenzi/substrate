@@ -22,6 +22,9 @@
 use crate::{hash::H256, hash::H512};
 use parity_codec::{Encode, Decode};
 
+#[cfg(feature = "sgx")]
+use std::prelude::v1::*;
+
 #[cfg(feature = "std")]
 use blake2_rfc;
 #[cfg(feature = "std")]
@@ -30,7 +33,7 @@ use substrate_bip39::seed_from_entropy;
 use bip39::{Mnemonic, Language, MnemonicType};
 #[cfg(feature = "std")]
 use rand::Rng;
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 use crate::crypto::{Pair as TraitPair, DeriveJunction, SecretStringError, Derive, Ss58Codec};
 #[cfg(feature = "std")]
 use serde::{de, Serializer, Serialize, Deserializer, Deserialize};
@@ -47,10 +50,10 @@ type Seed = [u8; 32];
 pub struct Public(pub [u8; 32]);
 
 /// A key pair.
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 pub struct Pair(ed25519_dalek::Keypair);
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl Clone for Pair {
 	fn clone(&self) -> Self {
 		Pair(ed25519_dalek::Keypair {
@@ -85,7 +88,7 @@ impl From<Public> for [u8; 32] {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl From<Pair> for Public {
 	fn from(x: Pair) -> Self {
 		x.public()
@@ -116,14 +119,14 @@ impl UncheckedFrom<H256> for Public {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl ::std::fmt::Display for Public {
 	fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
 		write!(f, "{}", self.to_ss58check())
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl ::std::fmt::Debug for Public {
 	fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
 		let s = self.to_ss58check();
@@ -146,7 +149,7 @@ impl<'de> Deserialize<'de> for Public {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl ::std::hash::Hash for Public {
 	fn hash<H: ::std::hash::Hasher>(&self, state: &mut H) {
 		self.0.hash(state);
@@ -209,14 +212,14 @@ impl AsMut<[u8]> for Signature {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl ::std::fmt::Debug for Signature {
 	fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
 		write!(f, "{}", crate::hexdisplay::HexDisplay::from(&self.0))
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl ::std::hash::Hash for Signature {
 	fn hash<H: ::std::hash::Hasher>(&self, state: &mut H) {
 		::std::hash::Hash::hash(&self.0[..], state);
@@ -321,10 +324,10 @@ impl Public {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl Derive for Public {}
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl AsRef<Pair> for Pair {
 	fn as_ref(&self) -> &Pair {
 		&self
@@ -332,7 +335,7 @@ impl AsRef<Pair> for Pair {
 }
 
 /// Derive a single hard junction.
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 fn derive_hard_junction(secret_seed: &Seed, cc: &[u8; 32]) -> Seed {
 	("Ed25519HDKD", secret_seed, cc).using_encoded(|data| {
 		let mut res = [0u8; 32];
@@ -342,13 +345,13 @@ fn derive_hard_junction(secret_seed: &Seed, cc: &[u8; 32]) -> Seed {
 }
 
 /// An error when deriving a key.
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 pub enum DeriveError {
 	/// A soft key was found in the path (and is unsupported).
 	SoftKeyInPath,
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl TraitPair for Pair {
 	type Public = Public;
 	type Seed = Seed;
@@ -359,9 +362,19 @@ impl TraitPair for Pair {
 	///
 	/// This is only for ephemeral keys really, since you won't have access to the secret key
 	/// for storage. If you want a persistent key pair, use `generate_with_phrase` instead.
+	#[cfg(feature = "std")]
 	fn generate() -> Pair {
 		let mut seed: Seed = Default::default();
 		rand::rngs::EntropyRng::new().fill(seed.as_mut());
+		Self::from_seed(seed)
+	}
+	#[cfg(feature = "sgx")]
+	fn generate() -> Pair {
+		use sgx_rand::StdRng;
+
+	    let mut seed = [0u8; 32];
+    	let mut rand = StdRng::new().unwrap();
+		rand.fill_bytes(&mut seed);
 		Self::from_seed(seed)
 	}
 
@@ -469,7 +482,7 @@ impl TraitPair for Pair {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl Pair {
 	/// Get the seed for this key.
 	pub fn seed(&self) -> &Seed {

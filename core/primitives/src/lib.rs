@@ -31,10 +31,23 @@ macro_rules! map {
 	)
 }
 
+#[cfg(feature = "sgx")]
+#[macro_use]
+extern crate sgx_tstd as std;
+#[cfg(feature = "sgx")]
+use std::prelude::v1::*;
+#[cfg(feature = "sgx")]
+use std::ops::Deref;
+
+#[cfg(not(feature = "sgx"))]
+use rstd::vec::Vec;
+#[cfg(not(feature = "sgx"))]
 use rstd::prelude::*;
+#[cfg(not(feature = "sgx"))]
 use rstd::ops::Deref;
+
 use parity_codec::{Encode, Decode};
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 use std::borrow::Cow;
 #[cfg(feature = "std")]
 use serde::{Serialize, Deserialize};
@@ -44,12 +57,12 @@ pub use impl_serde::serialize as bytes;
 
 #[cfg(any(feature = "std", feature = "sgx"))]
 pub mod hashing;
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 pub use hashing::{blake2_128, blake2_256, twox_64, twox_128, twox_256};
-#[cfg(feature = "sgx")]
-pub use hashing::{twox_64, twox_128, twox_256};
 
-#[cfg(feature = "std")]
+//pub use hashing::{twox_64, twox_128, twox_256};
+
+#[cfg(any(feature = "std", feature = "sgx"))]
 pub mod hexdisplay;
 pub mod crypto;
 

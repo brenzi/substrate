@@ -16,6 +16,9 @@
 
 //! Wrapper type for byte collections that outputs hex.
 
+#[cfg(feature = "sgx")]
+use std::prelude::v1::*;
+
 /// Simple wrapper to display hex representation of bytes.
 pub struct HexDisplay<'a>(&'a [u8]);
 

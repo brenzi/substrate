@@ -18,11 +18,11 @@
 //! Cryptographic utilities.
 // end::description[]
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 use parity_codec::{Encode, Decode};
 #[cfg(feature = "std")]
 use regex::Regex;
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 use base58::{FromBase58, ToBase58};
 
 /// The root phrase for our publicly known keys.
@@ -64,7 +64,7 @@ impl<S, T: UncheckedFrom<S>> UncheckedInto<T> for S {
 
 /// An error with the interpretation of a secret.
 #[derive(Debug, Clone, PartialEq, Eq)]
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 pub enum SecretStringError {
 	/// The overall format was invalid (e.g. the seed phrase contained symbols).
 	InvalidFormat,
@@ -180,7 +180,7 @@ impl<T: AsRef<str>> From<T> for DeriveJunction {
 }
 
 /// An error type for SS58 decoding.
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 #[derive(Clone, Copy, Eq, PartialEq, Debug)]
 pub enum PublicError {
 	/// Bad alphabet.
@@ -198,7 +198,7 @@ pub enum PublicError {
 }
 
 /// Key that can be encoded to/from SS58.
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 pub trait Ss58Codec: Sized {
 	/// Some if the string is a properly encoded SS58Check address.
 	fn from_ss58check(s: &str) -> Result<Self, PublicError>;
@@ -209,7 +209,7 @@ pub trait Ss58Codec: Sized {
 	fn to_ss58check(&self) -> String;
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 /// Derivable key trait.
 pub trait Derive: Sized {
 	/// Derive a child key from a series of given junctions.
@@ -220,10 +220,10 @@ pub trait Derive: Sized {
 	}
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 const PREFIX: &[u8] = b"SS58PRE";
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 fn ss58hash(data: &[u8]) -> blake2_rfc::blake2b::Blake2bResult {
 	let mut context = blake2_rfc::blake2b::Blake2b::new(64);
 	context.update(PREFIX);
@@ -231,7 +231,7 @@ fn ss58hash(data: &[u8]) -> blake2_rfc::blake2b::Blake2bResult {
 	context.finalize()
 }
 
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 impl<T: AsMut<[u8]> + AsRef<[u8]> + Default + Derive> Ss58Codec for T {
 	fn from_ss58check(s: &str) -> Result<Self, PublicError> {
 		let mut res = T::default();
@@ -287,7 +287,7 @@ impl<T: AsMut<[u8]> + AsRef<[u8]> + Default + Derive> Ss58Codec for T {
 /// Trait suitable for typical cryptographic PKI key pair type.
 ///
 /// For now it just specifies how to create a key from a phrase and derivation path.
-#[cfg(feature = "std")]
+#[cfg(any(feature = "std", feature = "sgx"))]
 pub trait Pair: Sized + 'static {
 	/// TThe type which is used to encode a public key.
 	type Public;

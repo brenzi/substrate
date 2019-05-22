@@ -19,7 +19,7 @@ wasmi = { git = "https://github.com/paritytech/wasmi.git", rev = "5be300c99f8160
 #wasmi = { version = "0.4.3", default-features = false, optional = true }
 hash-db = { version = "0.12", default-features = false }
 hash256-std-hasher = { version = "0.12", default-features = false }
-ed25519-dalek = { version = "1.0.0-pre.1", optional = true }
+ed25519-dalek = { version = "1.0.0-pre.1", default-features = false, optional = true }
 base58 = { version = "0.1", optional = true }
 #blake2-rfc = { version = "0.2.18", default-features = false, optional = true }
 blake2-rfc = { git = "https://github.com/brenzi/blake2-rfc.git", default-features = false, optional = true }
@@ -30,6 +30,8 @@ substrate-bip39 = { git = "https://github.com/paritytech/substrate-bip39", optio
 tiny-bip39 = { version = "0.6.1", optional = true }
 hex = { version = "0.3", optional = true }
 regex = {version = "1.1", optional = true }
+sgx_tstd = { git = "https://github.com/baidu/rust-sgx-sdk", optional = true }
+sgx_rand = { git = "https://github.com/baidu/rust-sgx-sdk", optional = true }
 
 [dev-dependencies]
 substrate-serializer = { path = "../serializer" }
@@ -65,7 +67,8 @@ std = [
 	"rustc-hex/std",
 	"twox-hash/std",
 	"blake2-rfc/std",
-	"ed25519-dalek",
+	"ed25519-dalek/std",
+	"ed25519-dalek/u64_backend",
 	"hex",
 	"base58",
 	"substrate-bip39",
@@ -81,5 +84,8 @@ sgx = [
 	"wasmi/core", #rust-sgx-sdk doesnt have this feature
 #	"wasmi",
 	"twox-hash",
-	"blake2-rfc"
+	"blake2-rfc",
+	"sgx_tstd",
+	"sgx_rand",
+	"ed25519-dalek/u64_backend",
 ]
